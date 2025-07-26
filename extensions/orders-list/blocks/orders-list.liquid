@@ -1,0 +1,28 @@
+{% if customer %}
+  <script src="{{ "orders-list.js" |  asset_url }}" defer></script>
+  <order-list class="orders-list__container" data-shop="{{ request.host }}">
+    <h3>Select orders</h3>
+
+    <ul>
+      {% for order in customer.orders %}
+        <li class="orders-list__item-container">
+          <label class="orders-list__order-label">
+            <input class="orders-list__order-checkbox" type="checkbox" data-id="{{ order.id }}">
+            <span class="orders-list__name">{{ order.name }}</span>
+          </label>
+        </li>
+      {% endfor %}
+    </ul>
+    <a class="orders-list__download-link" href="{{ block.settings.app_link }}" target="_blank"
+      >Download orders in Exel</a
+    >
+  </order-list>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Order List",
+  "target": "section",
+  "settings": [{ "type": "text", "id": "app_link", "default": "42151", "label": "App Hosted Link" }]
+}
+{% endschema %}
