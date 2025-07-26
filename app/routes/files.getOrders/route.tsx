@@ -14,12 +14,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return json({ error: "Ids of orders not provided" }, { status: 400 });
   }
   const admin = await shopify.unauthenticated.admin(shop);
+  const decodedOrderIds = decodeURIComponent(ordersIds)
+    .split(",")
+    .map((el) => `gid://shopify/Order/${el}`);
 
   const response = await admin.admin.graphql(
-    `query GetOrders($queryID: String) {
-  orders(first: 250, query: $queryID) {
-    nodes {
-      lineItems(first: 250) {
+    `query GetOrders($queryID: [ID!]!) {
+  nodes(ids: $queryID) {
+    ...on Order {
+			lineItems(first: 250) {
         nodes {
           variant {
             displayName
@@ -48,13 +51,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }`,
     {
       variables: {
-        queryID: `[${ordersIds}]`,
+        queryID: decodedOrderIds,
       },
     },
   );
   const responseJson = await response.json();
 
-  const orders = responseJson.data?.orders?.nodes.reduce((acc, order) => {
+  const orders = responseJson.data?.nodes.reduce((acc, order) => {
     const newOrder = order.lineItems.nodes.map((lineItem) => ({
       "Order ID": order.id,
       "Order name": order.name,
