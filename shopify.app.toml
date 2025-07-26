@@ -3,7 +3,7 @@
 client_id = "e2bfd378d1fce12499fd7e50b5c21c81"
 name = "test-ds-app"
 handle = "test-ds-app"
-application_url = "https://aa9518ecf61e.ngrok-free.app"
+application_url = "https://test-ds-app.fly.dev"
 embedded = true
 
 [build]
@@ -26,7 +26,11 @@ api_version = "2025-07"
 scopes = "read_orders,read_customers,read_products"
 
 [auth]
-redirect_urls = ["https://aa9518ecf61e.ngrok-free.app/auth/callback", "https://aa9518ecf61e.ngrok-free.app/auth/shopify/callback", "https://aa9518ecf61e.ngrok-free.app/api/auth/callback"]
+redirect_urls = [
+  "https://test-ds-app.fly.dev/auth/callback",
+  "https://test-ds-app.fly.dev/auth/shopify/callback",
+  "https://test-ds-app.fly.dev/api/auth/callback"
+]
 
 [pos]
 embedded = false
