@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -17,9 +17,15 @@ import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
+  const requestUrl = new URL(request.url);
 
-  return null;
+  const basicUrl = requestUrl.origin.startsWith("https")
+    ? requestUrl.origin
+    : `https` + requestUrl.origin.substring(4);
+  return {
+    url: basicUrl,
+  };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -93,7 +99,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Index() {
   const fetcher = useFetcher<typeof action>();
-
+  const { url } = useLoaderData<typeof loader>();
   const shopify = useAppBridge();
   const isLoading =
     ["loading", "submitting"].includes(fetcher.state) &&
@@ -124,7 +130,7 @@ export default function Index() {
               <BlockStack gap="500">
                 <BlockStack gap="200">
                   <Text as="h2" variant="headingMd">
-                    Congrats on creating a new Shopify app 🎉
+                    {url}
                   </Text>
                   <Text variant="bodyMd" as="p">
                     This embedded app template uses{" "}
