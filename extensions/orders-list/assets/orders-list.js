@@ -20,7 +20,8 @@ if (!customElements.get("order-list")) {
             ".orders-list__order-checkbox",
           );
           const ordersIds = [...checkboxes]
-            ?.map((el) => (el.checked ? el.dataset.id : ""))
+            ?.filter((el) => el.checked)
+            ?.map((el) => el.dataset.id)
             .join(",");
 
           url.searchParams.set("shop", this.dataset.shop);
